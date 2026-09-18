@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마법사의 탑: 리듬 어드벤처</title>
+    <!-- Google Fonts for Retro Pixel Look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-outer-container">
+        <header class="game-header">
+            <h1 class="glitch-title" data-text="WIZARD'S RHYTHM TOWER">WIZARD'S RHYTHM TOWER</h1>
+            <div class="subtitle">마법사에게 빼앗긴 신체를 되찾아라!</div>
+        </header>
+
+        <div class="game-main-layout">
+            <!-- Left Info Panel -->
+            <div class="info-panel left-panel">
+                <div class="panel-section">
+                    <h3>현재 상태</h3>
+                    <div class="status-indicator">
+                        <span id="current-floor-lbl">FLOOR 1</span>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <h3>신체 회수율</h3>
+                    <div class="body-parts-list">
+                        <div class="body-part-item acquired" id="part-torso">
+                            <span class="part-icon">👕</span>
+                            <span class="part-name">몸통 (보유함)</span>
+                        </div>
+                        <div class="body-part-item missing" id="part-lleg">
+                            <span class="part-icon">🦵</span>
+                            <span class="part-name">왼쪽 다리 (1층)</span>
+                        </div>
+                        <div class="body-part-item missing" id="part-rleg">
+                            <span class="part-icon">🦵</span>
+                            <span class="part-name">오른쪽 다리 (2층)</span>
+                        </div>
+                        <div class="body-part-item missing" id="part-larm">
+                            <span class="part-icon">💪</span>
+                            <span class="part-name">왼쪽 팔 (3층)</span>
+                        </div>
+                        <div class="body-part-item missing" id="part-rarm">
+                            <span class="part-icon">💪</span>
+                            <span class="part-name">오른쪽 팔 (4층)</span>
+                        </div>
+                        <div class="body-part-item missing" id="part-head">
+                            <span class="part-icon">👤</span>
+                            <span class="part-name">머리 (5층)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Central Game Area -->
+            <div class="canvas-container">
+                <div class="crt-screen">
+                    <canvas id="gameCanvas" width="800" height="600"></canvas>
+                    <div class="scanlines"></div>
+                    <div class="screen-glow"></div>
+                </div>
+            </div>
+
+            <!-- Right Controls Panel -->
+            <div class="info-panel right-panel">
+                <div class="panel-section">
+                    <h3>조작 방법</h3>
+                    <div class="controls-guide">
+                        <div class="control-item">
+                            <span class="key-box">W</span>
+                            <span class="key-box">A</span>
+                            <span class="key-box">S</span>
+                            <span class="key-box">D</span>
+                            <span class="desc">이동 (모험 모드)</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="key-box wide">SPACE</span>
+                            <span class="desc">대화 / 다음</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="key-box">Q</span>
+                            <span class="key-box">W</span>
+                            <span class="key-box">E</span>
+                            <span class="key-box">R</span>
+                            <span class="desc">리듬 게임 조작</span>
+                        </div>
+                        <div class="control-item">
+                            <span class="key-box">SHIFT</span>
+                            <span class="desc">층 스킵 (관리자)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <h3>오디오 설정</h3>
+                    <div class="audio-controls">
+                        <button id="btn-audio-init" class="retro-btn">🔊 오디오 활성화</button>
+                        <div class="volume-slider-container">
+                            <label for="volume-slider">볼륨</label>
+                            <input type="range" id="volume-slider" min="0" max="100" value="50">
+                        </div>
+                        <div id="audio-status" class="audio-status-msg">오디오 준비 완료.</div>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <h3>🎵 층별 음악 설정</h3>
+                    <div class="audio-controls" style="font-size:9px;">
+                        <div style="margin-bottom:4px; color:#aaa;">MP3/OGG/WAV 파일을 선택하세요</div>
+
+                        <!-- Floor 1 -->
+                        <div class="floor-music-row">
+                            <span class="floor-badge">1F</span>
+                            <label for="music-floor-0" class="mini-btn">파일 선택</label>
+                            <input type="file" id="music-floor-0" accept="audio/*" style="display:none;" data-floor="0">
+                            <span class="music-fname" id="fname-floor-0">기본 (합성)</span>
+                        </div>
+                        <!-- Floor 2 -->
+                        <div class="floor-music-row">
+                            <span class="floor-badge">2F</span>
+                            <label for="music-floor-1" class="mini-btn">파일 선택</label>
+                            <input type="file" id="music-floor-1" accept="audio/*" style="display:none;" data-floor="1">
+                            <span class="music-fname" id="fname-floor-1">기본 (합성)</span>
+                        </div>
+                        <!-- Floor 3 -->
+                        <div class="floor-music-row">
+                            <span class="floor-badge">3F</span>
+                            <label for="music-floor-2" class="mini-btn">파일 선택</label>
+                            <input type="file" id="music-floor-2" accept="audio/*" style="display:none;" data-floor="2">
+                            <span class="music-fname" id="fname-floor-2">기본 (합성)</span>
+                        </div>
+                        <!-- Floor 4 -->
+                        <div class="floor-music-row">
+                            <span class="floor-badge">4F</span>
+                            <label for="music-floor-3" class="mini-btn">파일 선택</label>
+                            <input type="file" id="music-floor-3" accept="audio/*" style="display:none;" data-floor="3">
+                            <span class="music-fname" id="fname-floor-3">기본 (합성)</span>
+                        </div>
+                        <!-- Floor 5 -->
+                        <div class="floor-music-row">
+                            <span class="floor-badge">5F</span>
+                            <label for="music-floor-4" class="mini-btn">파일 선택</label>
+                            <input type="file" id="music-floor-4" accept="audio/*" style="display:none;" data-floor="4">
+                            <span class="music-fname" id="fname-floor-4">기본 (합성)</span>
+                        </div>
+
+                        <button id="btn-clear-music" class="retro-btn" style="margin-top:6px; font-size:9px; padding:4px;">🗑 모두 초기화</button>
+                    </div>
+                </div>
+                <div class="panel-section score-tracker">
+                    <h3>최고 기록</h3>
+                    <div class="high-score-val" id="high-score-val">000000</div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="game-footer">
+            <p>© 2026 Wizard's Rhythm Tower - Classic Rhythm RPG</p>
+        </footer>
+    </div>
+
+    <!-- YouTube Iframe Player Container (Hidden - but must have valid dimensions for API to work) -->
+    <div id="youtube-player-container" style="position: fixed; bottom: 0; right: 0; width: 200px; height: 200px; opacity: 0; pointer-events: none; z-index: -1;"></div>
+
+    <!-- Load Game Scripts -->
+    <script src="audio.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
