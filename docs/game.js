@@ -421,10 +421,9 @@ function setupInputHandlers() {
                     updateSidebar();
                     console.log(`[Admin] Advanced to Floor ${currentFloor + 1}`);
                 } else {
-                    // Already at last floor — trigger victory
-                    reclaimedLimbs.head = true;
-                    gameState = STATE_VICTORY;
-                    updateSidebar();
+                    // From the last floor, the shortcut opens the hidden boss directly.
+                    unlockHiddenStage();
+                    startHiddenStage();
                 }
             }
         }
